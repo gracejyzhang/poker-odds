@@ -12,7 +12,6 @@ class Strength(IntEnum):
     PAIR = 1
     HIGH_CARD = 0
 
-# todo: check best hand selection and comparison; probability is coming out lower than expected especially with low and non-paired cards
 class Hand:
     # assumes cards are from one deck when computing best hand
     def __init__(self, cards):
@@ -22,43 +21,37 @@ class Hand:
         self.strength = Strength.HIGH_CARD
         self.compute_best()
 
+    def cmp_cards(self, other):
+        for i in range(4, -1, -1):
+            if self.best_hand[i].rank != other.best_hand[i].rank:
+                return self.best_hand[i].rank - other.best_hand[i].rank
+        return 0
+
     def cmp_hand(self, other):
         if self.strength == other.strength:
-            if self.strength == Strength.STRAIGHT_FLUSH or self.strength == Strength.STRAIGHT or self.strength == Strength.HIGH_CARD:
+            if self.strength == Strength.STRAIGHT_FLUSH or self.strength == Strength.STRAIGHT:
                 return self.best_hand[4].rank - other.best_hand[4].rank
-            if self.strength == Strength.FULL_HOUSE or self.strength == Strength.THREE_KIND or self.strength == Strength.FOUR_KIND:
-                return self.best_hand[2].rank - other.best_hand[2].rank
-            if self.strength == Strength.FLUSH:
-                i = 4
-                while (i >= 0 and self.best_hand[i].rank == other.best_hand[i].rank):
-                    i -= 1
-                return self.best_hand[i].rank - other.best_hand[i].rank
-            if self.strength == Strength.TWO_PAIR:
+            elif self.strength == Strength.FULL_HOUSE or self.strength == Strength.THREE_KIND or self.strength == Strength.FOUR_KIND:
+                if self.best_hand[2].rank != other.best_hand[2].rank:
+                    return self.best_hand[2].rank - other.best_hand[2].rank
+            elif self.strength == Strength.TWO_PAIR:
                 if self.best_hand[3].rank != other.best_hand[3].rank:
                     return self.best_hand[3].rank - other.best_hand[3].rank
                 elif self.best_hand[1].rank != other.best_hand[1].rank:
                     return self.best_hand[1].rank - other.best_hand[1].rank
-                else:
-                    for i in range(5):
-                        if self.best_hand[i].rank != other.best_hand[i].rank:
-                            return self.best_hand[i].rank - other.best_hand[i].rank
-            if self.strength == Strength.PAIR:
+            elif self.strength == Strength.PAIR:
                 self_pair = 0
-                self_max = 0
                 other_pair = 0
-                other_max = 0
-                for i in range(4):
-                    if self.best_hand[i].rank == self.best_hand[i + 1].rank:
+                for i in range(4, 0, -1):
+                    if self.best_hand[i].rank == self.best_hand[i - 1].rank:
                         self_pair = self.best_hand[i].rank
-                    else:
-                        self_max = self.best_hand[i].rank
-                    if other.best_hand[i].rank == other.best_hand[i + 1].rank:
+                    if other.best_hand[i].rank == other.best_hand[i - 1].rank:
                         other_pair = other.best_hand[i].rank
-                    else:
-                        other_max = other.best_hand[i].rank
+                    if self_pair > 0 and other_pair > 0:
+                        break
                 if self_pair != other_pair:
                     return self_pair - other_pair
-                return self_max - other_max
+            return self.cmp_cards(other)
         return self.strength - other.strength
 
     # todo: add check for ace-low straight
@@ -73,7 +66,7 @@ class Hand:
                 self.best_hand.reverse()
                 self.strength = Strength.STRAIGHT_FLUSH
                 return True
-        return None
+        return False
 
     def four_kind(self):
         result = []
@@ -99,17 +92,16 @@ class Hand:
             if len(ranks[card.rank]) == 3:
                 if pair == card.rank:
                     pair = 0
-                if pair > 0:
-                    self.best_hand = ranks[card.rank] + ranks[pair]
-                    self.strength = Strength.FULL_HOUSE
-                    return True
                 triple = card.rank
             elif len(ranks[card.rank]) == 2 and pair == 0:
-                if triple > 0:
-                    self.best_hand = ranks[card.rank] = ranks[triple]
-                    self.strength = Strength.FULL_HOUSE
-                    return True
                 pair = card.rank
+            if triple > 0 and pair > 0:
+                if triple > pair:
+                    self.best_hand = ranks[card.rank] + ranks[triple]
+                else:
+                    self.best_hand = ranks[card.rank] + ranks[pair]
+                self.strength = Strength.FULL_HOUSE
+                return True
         return False
 
     def flush(self):

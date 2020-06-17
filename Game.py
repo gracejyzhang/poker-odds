@@ -41,17 +41,20 @@ class Game:
         print(self.count)
 
     # todo: add error and invalid input checks
+    # returns (win_percent, tie_percent, loss_percent)
     def compute(self, hole, community, num_opp):
         self.deck.init_hole(hole)
         self.deck.add_comm(community)
         # add opp stuff
         self.compute_percent(2 * num_opp + 5 - len(community))
         self.compute_comm()
-        return self.wins / (self.wins + self.losses + self.ties)
+        return (self.wins / (self.wins + self.losses + self.ties),
+                self.ties / (self.wins + self.losses + self.ties),
+                self.losses / (self.wins + self.losses + self.ties))
 
     def compute_percent(self, num_unknown):
         if num_unknown > 3:
-            self.percent = 0.16 * (0.25 ** (num_unknown - 4))
+            self.percent = 0.16 * (0.2 ** (num_unknown - 4))
         # 0.15 for 4 cards
         # 0.04 for 5 cards
         # 0.01 for 6 cards

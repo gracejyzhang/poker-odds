@@ -23,7 +23,6 @@ def test_hand(ranks, suits):
     print(Hand(cards))
 
 if __name__ == '__main__':
-    test_game([2,2],['h', 's'],[3, 4, 5],['h','h','h'])
+    test_game([13,14],['h', 'h'],[12,11],['h','h'])
     # test_hand([9,8,10,3,5,13,14], ['h','s','d','c','s','d','s'])
-
 
