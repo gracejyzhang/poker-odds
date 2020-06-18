@@ -37,8 +37,6 @@ class Game:
             my_hand = Hand(self.deck.hole.union(self.deck.community))
             self.compute_opp(my_hand)
             self.deck.remove_comm(combo)
-        print(self.losses)
-        print(self.count)
 
     # todo: add error and invalid input checks
     # returns (win_percent, tie_percent, loss_percent)
