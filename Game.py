@@ -16,12 +16,12 @@ class Game:
         for combo in opp_combos:
             if random.random() > self.percent:
                 continue
-            self.count += 1
             self.deck.init_opp(combo)
             opp_hand = Hand(self.deck.opp.union(self.deck.community))
-            if my_hand.cmp_hand(opp_hand) > 0:
+            cmp = my_hand.cmp_hand(opp_hand)
+            if cmp > 0:
                 self.wins += 1
-            elif my_hand.cmp_hand(opp_hand) < 0:
+            elif cmp < 0:
                 self.losses += 1
             else:
                 self.ties += 1
