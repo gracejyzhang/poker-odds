@@ -1,4 +1,4 @@
-python/.idea/
-python/venv/
-python/__pycache__/
+.idea/
+venv/
+__pycache__/
 nodejs/package-lock.json

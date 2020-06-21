@@ -55,6 +55,7 @@ class Hand:
         return self.strength - other.strength
 
     # todo: add check for ace-low straight
+    # todo: double check
     def straight_flush(self):
         suits = defaultdict(list)
         for card in reversed(self.cards):

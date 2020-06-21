@@ -12,7 +12,7 @@ def test_game(hole_ranks, hole_suits, comm_ranks, comm_suits):
     for i in range(len(comm_ranks)):
         community.add(Card(comm_ranks[i], comm_suits[i]))
     game = Game()
-    result = game.compute(hole, community, 1)
+    result = game.compute(hole, community)
     print(datetime.datetime.now() - start)
     print(result)
 
@@ -23,6 +23,6 @@ def test_hand(ranks, suits):
     print(Hand(cards))
 
 if __name__ == '__main__':
-    test_game([13,14],['h', 'h'],[12,11],['h','h'])
+    test_game([13,14],['h', 'c'],[11,10,8],['h','s','d'])
     # test_hand([9,8,10,3,5,13,14], ['h','s','d','c','s','d','s'])
 

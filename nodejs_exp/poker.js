@@ -1,4 +1,4 @@
-var Hand = require('pokersolver').Hand;
+const Hand = require('pokersolver').Hand;
 
 function combinations(array, size) {
 
@@ -87,16 +87,16 @@ class Game {
                 continue;
             }
             this.deck.add_opp(combo);
-            const opp_hand = this.deck.community.concat(this.deck.opp);
+            let opp_hand = Hand.solve(this.deck.community.concat(this.deck.opp));            
             var winner = Hand.winners([my_hand, opp_hand]);
             if (winner.length > 1) {
-                self.ties += 1;
+                this.ties += 1;
             }
-            else if (winner[0].equals(my_hand)) {
-                self.wins += 1;
+            else if (winner[0] == my_hand) {
+                this.wins += 1;
             }
             else {
-                self.losses += 1;
+                this.losses += 1;
             }
             this.deck.remove_opp(combo);
         }
@@ -109,7 +109,7 @@ class Game {
                 continue;
             }
             this.deck.add_community(combo);
-            this.compute_opp(this.deck.hole.concat(this.deck.community));
+            this.compute_opp(Hand.solve(this.deck.hole.concat(this.deck.community)));
             this.deck.remove_community(combo);
         }
     }
@@ -121,6 +121,8 @@ class Game {
 }
 
 game = new Game();
-game.deck.add_hole(['As','Ad']);
-game.deck.add_community(['Ac','Ah','Kh']);
+game.deck.add_hole(['As','Kd']);
+game.deck.add_community(['Ac','Ah','Ad']);
+let start = new Date().getTime();
 console.log(game.compute());
+console.log(new Date().getTime() - start);
